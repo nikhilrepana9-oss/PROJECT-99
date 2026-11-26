@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PROJECT 99 | 55-Day Duo Live</title>
+<style>
+  :root {
+    --bg: #080d17;
+    --card: #0f1726;
+    --card-inner: #151f33;
+    --border: #1e2d4a;
+    --text: #e2e8f0;
+    --muted: #7f92b0;
+    --accent: #38bdf8;
+    --green: #10b981;
+    --purple: #a855f7;
+    --amber: #f59e0b;
+    --red: #ef4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body { background: var(--bg); color: var(--text); padding: 14px; min-height: 100vh; }
+  .topbar {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 16px; gap: 12px; margin-bottom: 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .badge-99 {
+    background: linear-gradient(135deg, #2563eb, #06b6d4); color: #fff;
+    font-weight: 800; font-size: 16px; width: 38px; height: 38px;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  }
+  .title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .title-row h1 { font-size: 16px; letter-spacing: 0.4px; }
+  .pill-days { background: #2d2310; color: var(--amber); border: 1px solid #574118; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+  .subtitle { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .split-bar { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 220px; }
+  .split-labels { display: flex; justify-content: space-between; width: 100%; font-size: 11px; color: var(--muted); font-weight: 600; }
+  .progress-track { width: 100%; height: 6px; background: #1e293b; border-radius: 999px; overflow: hidden; display: flex; }
+  .progress-k { background: var(--accent); height: 100%; transition: width 0.3s; }
+  .progress-m { background: var(--green); height: 100%; transition: width 0.3s; }
+
+  .control-bar {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 10px 14px; gap: 10px; margin-bottom: 14px;
+  }
+  .controls-left, .controls-right { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  select, input[type="number"], input[type="text"] {
+    background: var(--card-inner); border: 1px solid var(--border); color: var(--text);
+    border-radius: 8px; padding: 6px 10px; font-size: 12px; outline: none;
+  }
+  .timer-display { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; padding: 0 6px; color: #fff; }
+  .btn {
+    border: 1px solid var(--border); background: var(--card-inner); color: var(--text);
+    border-radius: 8px; padding: 6px 10px; font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: 0.15s;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn-start { background: #064e3b; border-color: #10b981; color: #6ee7b7; }
+  .btn-pause { background: #451a03; border-color: #f59e0b; color: #fcd34d; }
+  .btn-study { background: linear-gradient(135deg, #7e22ce, #ec4899); border: none; color: #fff; }
+  .btn-sync-ok { background: #052e2b; border-color: #10b981; color: #34d399; }
+  .btn-sync-warn { background: #3b1219; border-color: #ef4444; color: #fca5a5; }
+
+  .live-banner {
+    display: none; background: linear-gradient(90deg, #4c1d95, #831843);
+    border: 1px solid #c084fc; color: #fff; padding: 10px 16px; border-radius: 10px;
+    margin-bottom: 12px; font-size: 13px; font-weight: 600; justify-content: space-between; align-items: center;
+  }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+  .panel { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
+  .panel-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .user-name { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 800; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #475569; display: inline-block; }
+  .dot.online { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .tag-roi { background: #0f293a; color: var(--accent); border: 1px solid #1d4ed8; font-size: 10px; padding: 2px 7px; border-radius: 6px; font-weight: 700; }
+  .panel-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .subtopic-count { text-align: right; font-size: 11px; color: var(--muted); }
+  .subtopic-count strong { display: block; font-size: 14px; color: #fff; }
+
+  .stats-box {
+    background: var(--card-inner); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px;
+  }
+  .stat-group { display: flex; gap: 18px; }
+  .stat-item label { display: block; font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: 0.5px; }
+  .stat-item span { font-size: 17px; font-weight: 800; color: var(--accent); }
+  .stat-item.total span { color: #fff; }
+  .stat-item.streak span { color: var(--amber); }
+  .quick-add { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+
+  .section-box { background: var(--card-inner); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+  .section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
+  .section-title { font-size: 12px; font-weight: 800; letter-spacing: 0.4px; }
+  .task-item {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; margin-bottom: 7px;
+  }
+  .task-left { display: flex; align-items: center; gap: 9px; }
+  .task-left input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--green); cursor: pointer; }
+  .task-title { font-size: 13px; font-weight: 600; }
+  .task-title.done { text-decoration: line-through; color: var(--muted); }
+  .task-meta { font-size: 11px; color: var(--muted); }
+  .subj-phy { color: #38bdf8; font-weight: 700; }
+  .subj-chem { color: #34d399; font-weight: 700; }
+  .subj-math { color: #c084fc; font-weight: 700; }
+
+  .chapter-card { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; background: var(--card); overflow: hidden; }
+  .chapter-head { padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 12px; font-weight: 700; }
+  .chapter-head:hover { background: #162238; }
+  .subtopic-list { display: none; padding: 8px 10px; border-top: 1px solid var(--border); background: #0c1322; }
+  .subtopic-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 12px; border-bottom: 1px solid #162033; }
+  .subtopic-row:last-child { border-bottom: none; }
+
+  .modal-backdrop {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.72);
+    align-items: center; justify-content: center; z-index: 50; padding: 16px;
+  }
+  .modal { background: var(--card); border: 1px solid var(--border); border-radius: 14px; max-width: 440px; width: 100%; padding: 18px; }
+  .modal h2 { font-size: 16px; margin-bottom: 8px; }
+  .modal p { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+  .field { margin-bottom: 10px; }
+  .field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; font-weight: 700; }
+  .field input, .field select { width: 100%; padding: 8px 10px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="badge-99">99</div>
+    <div>
+      <div class="title-row">
+        <h1>PROJECT 99 | 55-DAY DUO</h1>
+        <span class="pill-days" id="daysLeftBadge">55 Days Left</span>
+      </div>
+      <div class="subtitle">Target: 220–240 Marks (55–60 Net Qs) • Non-Calc Maths + High-ROI Core</div>
+    </div>
+  </div>
+  <div class="split-bar">
+    <div class="split-labels">
+      <span id="topKLabel">K: 0h 0m</span>
+      <span id="topMLabel">M: 0h 0m</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-k" id="barK" style="width:50%"></div>
+      <div class="progress-m" id="barM" style="width:50%"></div>
+    </div>
+  </div>
+</div>
+
+<div class="live-banner" id="liveBanner">
+  <span id="liveBannerText">⚡ Partner is grinding right now!</span>
+  <button class="btn" onclick="document.getElementById('liveBanner').style.display='none'">Dismiss</button>
+</div>
+
+<div class="control-bar">
+  <div class="controls-left">
+    <select id="activeUserSelect" onchange="switchActiveUser(this.value)">
+      <option value="kaushal">Kaushal (This Device)</option>
+      <option value="minniiee">Minniiee (This Device)</option>
+    </select>
+    <select id="sessionTag">
+      <option>General PYQ Sprint</option>
+      <option>Physics Speed Drill</option>
+      <option>Chemistry Core / Organic</option>
+      <option>Non-Calc Maths Grind</option>
+      <option>Mock Analysis</option>
+    </select>
+    <span class="timer-display" id="timerDisplay">25:00</span>
+    <button class="btn" onclick="setTimerMinutes(25)">25m</button>
+    <button class="btn" onclick="setTimerMinutes(50)">50m</button>
+    <button class="btn" onclick="setTimerMinutes(90)">90m</button>
+    <input type="number" id="customMinInput" placeholder="min" style="width:62px" min="1" max="300" />
+    <button class="btn" onclick="applyCustomTimer()">Set</button>
+    <button class="btn btn-start" id="startPauseBtn" onclick="toggleTimer()">▶ Start</button>
+    <button class="btn btn-study" onclick="triggerStudyNow()">⚡ STUDY NOW</button>
+  </div>
+  <div class="controls-right">
+    <button class="btn btn-sync-ok" id="syncStatusBtn" onclick="openDuoModal()">● Room: KM143 (Firebase Live)</button>
+    <button class="btn" onclick="forceSyncNow()">🔄 Sync Now</button>
+    <button class="btn" onclick="downloadBackup()">⬇ Save App</button>
+  </div>
+</div>
+
+<div class="grid">
+  <!-- KAUSHAL PANEL -->
+  <div class="panel" id="panel-kaushal">
+    <div class="panel-header">
+      <div>
+        <div class="user-name"><span class="dot" id="dot-kaushal"></span> KAUSHAL <span class="tag-roi">80%+ HIGH-ROI CORE</span></div>
+        <div class="panel-sub">Maths: Non-Calc (14–15 Qs) • Phy & Chem: Speed + Heavy PYQs • Scratch Organic</div>
+      </div>
+      <div class="subtopic-count">80%+ SUBTOPICS<strong id="subCount-kaushal">0/0 (0%)</strong></div>
+    </div>
+
+    <div class="stats-box">
+      <div class="stat-group">
+        <div class="stat-item"><label>TODAY STUDIED</label><span id="today-kaushal">0h 0m</span></div>
+        <div class="stat-item total"><label>55D TOTAL</label><span id="total-kaushal">0h 0m</span></div>
+        <div class="stat-item streak"><label>STREAK</label><span id="streak-kaushal">0d</span></div>
+      </div>
+      <div class="quick-add">
+        <button class="btn" onclick="logMinutes('kaushal', 30)">+30m</button>
+        <button class="btn" onclick="logMinutes('kaushal', 60)">+1h</button>
+        <button class="btn" onclick="logMinutes('kaushal', 120)">+2h</button>
+        <input type="number" id="manualMin-kaushal" placeholder="min" style="width:58px" />
+        <button class="btn btn-start" onclick="logManual('kaushal')">Log</button>
+      </div>
+    </div>
+
+    <div class="section-box">
+      <div class="section-head">
+        <span class="section-title">🎯 TODAY'S FOCUS QUEUE</span>
+        <div>
+          <button class="btn" onclick="addCustomTask('kaushal')">+ Custom Task</button>
+          <button class="btn" onclick="clearDoneTasks('kaushal')">Clear Done</button>
+        </div>
+      </div>
+      <div id="queue-kaushal"></div>
+    </div>
+
+    <div class="section-box">
+      <div class="section-head">
+        <span class="section-title">📚 MASTER SYLLABUS POOL (80%+ SUBTOPICS)</span>
+        <input type="text" placeholder="Search chapter or subtopic..." oninput="filterSyllabus('kaushal', this.value)" />
+      </div>
+      <div id="syllabus-kaushal"></div>
+    </div>
+  </div>
+
+  <!-- MINNIIEE PANEL -->
+  <div class="panel" id="panel-minniiee">
+    <div class="panel-header">
+      <div>
+        <div class="user-name"><span class="dot" id="dot-minniiee"></span> MINNIIEE <span class="tag-roi">80%+ HIGH-ROI CORE</span></div>
+        <div class="panel-sub">11th Phy + Phys/Inorg: Speed • Non-Calc Maths: Heavy PYQs • 12th Phy + Org: Scratch</div>
+      </div>
+      <div class="subtopic-count">80%+ SUBTOPICS<strong id="subCount-minniiee">0/0 (0%)</strong></div>
+    </div>
+
+    <div class="stats-box">
+      <div class="stat-group">
+        <div class="stat-item"><label>TODAY STUDIED</label><span id="today-minniiee">0h 0m</span></div>
+        <div class="stat-item total"><label>55D TOTAL</label><span id="total-minniiee">0h 0m</span></div>
+        <div class="stat-item streak"><label>STREAK</label><span id="streak-minniiee">0d</span></div>
+      </div>
+      <div class="quick-add">
+        <button class="btn" onclick="logMinutes('minniiee', 30)">+30m</button>
+        <button class="btn" onclick="logMinutes('minniiee', 60)">+1h</button>
+        <button class="btn" onclick="logMinutes('minniiee', 120)">+2h</button>
+        <input type="number" id="manualMin-minniiee" placeholder="min" style="width:58px" />
+        <button class="btn btn-start" onclick="logManual('minniiee')">Log</button>
+      </div>
+    </div>
+
+    <div class="section-box">
+      <div class="section-head">
+        <span class="section-title">🎯 TODAY'S FOCUS QUEUE</span>
+        <div>
+          <button class="btn" onclick="addCustomTask('minniiee')">+ Custom Task</button>
+          <button class="btn" onclick="clearDoneTasks('minniiee')">Clear Done</button>
+        </div>
+      </div>
+      <div id="queue-minniiee"></div>
+    </div>
+
+    <div class="section-box">
+      <div class="section-head">
+        <span class="section-title">📚 MASTER SYLLABUS POOL (80%+ SUBTOPICS)</span>
+        <input type="text" placeholder="Search chapter or subtopic..." oninput="filterSyllabus('minniiee', this.value)" />
+      </div>
+      <div id="syllabus-minniiee"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DUO CONNECTION MODAL -->
+<div class="modal-backdrop" id="duoModal">
+  <div class="modal">
+    <h2>🔥 Firebase Live Duo Sync (Pre-Wired)</h2>
+    <p>Your Firebase Realtime Database and Room <strong>KM143</strong> are already locked in. Just choose who is using <strong>this device</strong>.</p>
+    <div class="field">
+      <label>Who is on this phone / laptop?</label>
+      <select id="modalUserRole">
+        <option value="kaushal">Kaushal (Left Side)</option>
+        <option value="minniiee">Minniiee (Right Side)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Shared Room Code</label>
+      <input type="text" id="modalRoomCode" value="KM143" />
+    </div>
+    <div class="field">
+      <label>Firebase Realtime Database URL</label>
+      <input type="text" id="modalDbUrl" value="https://km143-12163-default-rtdb.asia-southeast1.firebasedatabase.app" />
+    </div>
+    <div id="modalDebugMsg" style="font-size:11px; color:#34d399; margin-bottom:10px;">Connected to Singapore Firebase RTDB.</div>
+    <div style="display:flex; gap:8px; justify-content:flex-end;">
+      <button class="btn" onclick="closeDuoModal()">Close</button>
+      <button class="btn btn-start" onclick="saveDuoConfig()">⚡ Save & Sync Now</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_DB_URL = "https://km143-12163-default-rtdb.asia-southeast1.firebasedatabase.app";
+const DEFAULT_ROOM = "KM143";
+
+const SYLLABUS_DATA = [
+  { chapter: "Electrostatics (Physics)", subj: "Physics", topics: ["Electric Charge & Coulomb's Law", "Electric Field & Field Lines", "Electric Flux & Gauss's Law", "Electric Potential & Potential Energy", "Conductors & Electrostatic Shielding"] },
+  { chapter: "Current Electricity (Physics)", subj: "Physics", topics: ["Drift Velocity & Ohm's Law", "Combination of Resistors & Symmetry", "Kirchhoff's Laws & Cells", "Electrical Instruments (Meter Bridge, Potentiometer, Galvanometer)", "Heating Effect & Power"] },
+  { chapter: "Ray Optics (Physics)", subj: "Physics", topics: ["Reflection & Mirror Formula", "Refraction at Plane Surface & Apparent Depth", "Critical Angle & Total Internal Reflection (TIR)", "Refraction at Curved Surface & Lens Formula", "Prism (Deviation & Dispersion)", "Optical Instruments (Microscope & Telescope)"] },
+  { chapter: "Modern Physics & Semiconductors (Physics)", subj: "Physics", topics: ["Photoelectric Effect", "Bohr's Atomic Model & Spectra", "De Broglie Wavelength & X-Rays", "Radioactivity & Nuclear Binding Energy", "Semiconductors, Diodes & Logic Gates"] },
+  { chapter: "Gravitation & SHM (Physics)", subj: "Physics", topics: ["Newton's Law & Acceleration due to Gravity", "Gravitational Potential & Escape Velocity", "Kepler's Laws & Satellites", "SHM Equations, Energy & Spring-Block Systems"] },
+  { chapter: "Chemical Kinetics (Chemistry)", subj: "Chemistry", topics: ["Rate of Reaction & Rate Law", "Zero & First Order Integrated Equations", "Half-Life & Parallel/Sequential Basics", "Arrhenius Equation & Activation Energy"] },
+  { chapter: "Coordination Compounds (Chemistry)", subj: "Chemistry", topics: ["Werner's Theory & IUPAC Nomenclature", "Isomerism (Structural & Stereoisomerism)", "Valence Bond Theory (VBT) & Hybridization", "Crystal Field Theory (CFT), Magnetic Moment & Color"] },
+  { chapter: "GOC & Hydrocarbons (Organic Seq 1-3)", subj: "Chemistry", topics: ["1. GOC: Inductive, Resonance, Hyperconjugation & Acid/Base", "2. Isomerism: Structural, Geometrical & Optical (R/S, D/L)", "3. Hydrocarbons: Alkanes, Alkenes (Markovnikov/Anti) & Alkynes"] },
+  { chapter: "Oxygen & Nitrogen Organic (Organic Seq 4-8)", subj: "Chemistry", topics: ["4. Haloalkanes & Haloarenes (SN1, SN2, E1, E2)", "5. Alcohols, Phenols & Ethers", "6. Aldehydes, Ketones & Carboxylic Acids (Aldol, Cannizzaro)", "7. Amines & Diazonium Salts", "8. Biomolecules (Carbohydrates, Amino Acids, Vitamins)"] },
+  { chapter: "Vectors & 3D Geometry (Maths Non-Calc)", subj: "Maths", topics: ["Dot & Cross Product Applications", "Scalar & Vector Triple Product", "Direction Cosines & Equation of Line in 3D", "Shortest Distance Between Skew Lines", "Plane Equations & Line-Plane Intersection"] },
+  { chapter: "Matrices, Determinants & Sequences (Maths Non-Calc)", subj: "Maths", topics: ["Properties of Determinants & System of Linear Equations (Cramer's)", "Adjoint, Inverse & Matrix Polynomials", "AP, GP, HP & Special Series (Sigma)", "Binomial Theorem: General & Middle Term, Remainder Problems"] },
+  { chapter: "Sets, Relations, Coordinate & Stats (Maths Quick Wins)", subj: "Maths", topics: ["Sets & Relations (Equivalence, Reflexive/Symmetric/Transitive)", "Straight Lines & Pair of Lines", "Circles (Tangents, Chords & Family of Circles)", "Statistics (Mean, Variance & Standard Deviation)"] }
+];
+
+const TOTAL_SUBTOPICS = SYLLABUS_DATA.reduce((acc, c) => acc + c.topics.length, 0);
+
+function getTodayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function defaultUserState(initialQueue) {
+  return {
+    todayDate: getTodayStr(),
+    todayMins: 0,
+    totalMins: 0,
+    streak: 0,
+    lastActiveDate: "",
+    lastSeen: 0,
+    completedTopics: {},
+    queue: initialQueue
+  };
+}
+
+let config = JSON.parse(localStorage.getItem("p99_duo_cfg") || "null") || {
+  role: "kaushal",
+  room: DEFAULT_ROOM,
+  dbUrl: DEFAULT_DB_URL
+};
+if (!config.dbUrl) config.dbUrl = DEFAULT_DB_URL;
+if (!config.room) config.room = DEFAULT_ROOM;
+
+let state = JSON.parse(localStorage.getItem("p99_duo_state") || "null") || {
+  kaushal: defaultUserState([
+    { id: "k1", title: "Electrostatics: Flux & Gauss's Law", subj: "Physics", pyqDone: 0, pyqTarget: 30, done: false },
+    { id: "k2", title: "Chemical Kinetics (Full 80%+ Core)", subj: "Chemistry", pyqDone: 0, pyqTarget: 40, done: false },
+    { id: "k3", title: "Vectors & 3D: Shortest Distance", subj: "Maths", pyqDone: 0, pyqTarget: 35, done: false }
+  ]),
+  minniiee: defaultUserState([
+    { id: "m1", title: "Current Electricity: Resistances & Instruments", subj: "Physics", pyqDone: 0, pyqTarget: 30, done: false },
+    { id: "m2", title: "1. GOC: Electronic Effects & Acid/Base", subj: "Chemistry", pyqDone: 0, pyqTarget: 30, done: false },
+    { id: "m3", title: "Sequences & Series (PYQ Grind)", subj: "Maths", pyqDone: 0, pyqTarget: 40, done: false }
+  ]),
+  nudge: { from: "", text: "", ts: 0 }
+};
+
+let lastSeenNudgeTs = state.nudge ? state.nudge.ts : 0;
+
+function saveLocal() {
+  localStorage.setItem("p99_duo_cfg", JSON.stringify(config));
+  localStorage.setItem("p99_duo_state", JSON.stringify(state));
+}
+
+function ensureDateRollover(u) {
+  const today = getTodayStr();
+  if (state[u].todayDate !== today) {
+    state[u].todayDate = today;
+    state[u].todayMins = 0;
+  }
+}
+
+function formatMins(m) {
+  const hrs = Math.floor((m || 0) / 60);
+  const mins = (m || 0) % 60;
+  return `${hrs}h ${mins}m`;
+}
+
+function renderAll() {
+  document.getElementById("activeUserSelect").value = config.role;
+  document.getElementById("modalUserRole").value = config.role;
+  document.getElementById("modalRoomCode").value = config.room;
+  document.getElementById("modalDbUrl").value = config.dbUrl;
+
+  ["kaushal", "minniiee"].forEach(u => {
+    ensureDateRollover(u);
+    const data = state[u];
+    document.getElementById(`today-${u}`).textContent = formatMins(data.todayMins);
+    document.getElementById(`total-${u}`).textContent = formatMins(data.totalMins);
+    document.getElementById(`streak-${u}`).textContent = `${data.streak || 0}d`;
+
+    const doneTopicsCount = Object.keys(data.completedTopics || {}).filter(k => data.completedTopics[k]).length;
+    const pct = Math.round((doneTopicsCount / TOTAL_SUBTOPICS) * 100);
+    document.getElementById(`subCount-${u}`).textContent = `${doneTopicsCount}/${TOTAL_SUBTOPICS} (${pct}%)`;
+
+    const isOnline = (u === config.role) || (Date.now() - (data.lastSeen || 0) < 25000);
+    const dotEl = document.getElementById(`dot-${u}`);
+    dotEl.className = isOnline ? "dot online" : "dot";
+
+    // Render queue
+    const qEl = document.getElementById(`queue-${u}`);
+    qEl.innerHTML = "";
+    (data.queue || []).forEach((item, idx) => {
+      const subjClass = item.subj === "Physics" ? "subj-phy" : (item.subj === "Chemistry" ? "subj-chem" : "subj-math");
+      const div = document.createElement("div");
+      div.className = "task-item";
+      div.innerHTML = `
+        <div class="task-left">
+          <input type="checkbox" ${item.done ? "checked" : ""} onchange="toggleTask('${u}', ${idx})" />
+          <div>
+            <div class="task-title ${item.done ? "done" : ""}">${item.title}</div>
+            <div class="task-meta"><span class="${subjClass}">${item.subj}</span> • PYQs: ${item.pyqDone}/${item.pyqTarget}</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:4px;">
+          <button class="btn" onclick="addPyq('${u}', ${idx}, 5)">+5</button>
+          <button class="btn" onclick="addPyq('${u}', ${idx}, 10)">+10</button>
+          <button class="btn" onclick="removeTask('${u}', ${idx})">✕</button>
+        </div>
+      `;
+      qEl.appendChild(div);
+    });
+  });
+
+  const kTotal = state.kaushal.totalMins || 0;
+  const mTotal = state.minniiee.totalMins || 0;
+  document.getElementById("topKLabel").textContent = `K: ${formatMins(kTotal)}`;
+  document.getElementById("topMLabel").textContent = `M: ${formatMins(mTotal)}`;
+  const sum = kTotal + mTotal;
+  if (sum > 0) {
+    document.getElementById("barK").style.width = `${Math.round((kTotal / sum) * 100)}%`;
+    document.getElementById("barM").style.width = `${Math.round((mTotal / sum) * 100)}%`;
+  }
+
+  const partner = config.role === "kaushal" ? "minniiee" : "kaushal";
+  const partnerName = partner === "kaushal" ? "Kaushal" : "Minniiee";
+  const partnerOnline = Date.now() - (state[partner].lastSeen || 0) < 25000;
+  const syncBtn = document.getElementById("syncStatusBtn");
+  if (partnerOnline) {
+    syncBtn.className = "btn btn-sync-ok";
+    syncBtn.textContent = `🟢 ${partnerName} Online • Room: ${config.room}`;
+  } else {
+    syncBtn.className = "btn btn-sync-ok";
+    syncBtn.textContent = `● Room: ${config.room} (Firebase Live)`;
+  }
+}
+
+function renderSyllabus(u, filterText = "") {
+  const container = document.getElementById(`syllabus-${u}`);
+  container.innerHTML = "";
+  const q = filterText.toLowerCase().trim();
+  SYLLABUS_DATA.forEach((chap, cIdx) => {
+    const matched = chap.topics.filter(t => !q || t.toLowerCase().includes(q) || chap.chapter.toLowerCase().includes(q));
+    if (matched.length === 0) return;
+
+    const card = document.createElement("div");
+    card.className = "chapter-card";
+    const head = document.createElement("div");
+    head.className = "chapter-head";
+    const doneInChap = chap.topics.filter(t => state[u].completedTopics && state[u].completedTopics[t]).length;
+    head.innerHTML = `<span>${chap.chapter}</span><span style="color:var(--muted)">${doneInChap}/${chap.topics.length} ▼</span>`;
+    const list = document.createElement("div");
+    list.className = "subtopic-list";
+    if (q) list.style.display = "block";
+
+    head.onclick = () => {
+      list.style.display = list.style.display === "block" ? "none" : "block";
+    };
+
+    matched.forEach(topic => {
+      const isChecked = !!(state[u].completedTopics && state[u].completedTopics[topic]);
+      const row = document.createElement("div");
+      row.className = "subtopic-row";
+      row.innerHTML = `
+        <label style="display:flex; align-items:center; gap:7px; cursor:pointer;">
+          <input type="checkbox" ${isChecked ? "checked" : ""} onchange="toggleSubtopic('${u}', '${topic.replace(/'/g, "\'")}')" />
+          <span style="${isChecked ? "text-decoration:line-through; color:var(--muted);" : ""}">${topic}</span>
+        </label>
+        <button class="btn" style="padding:2px 7px; font-size:11px;" onclick="pushToQueue('${u}', '${topic.replace(/'/g, "\'")}', '${chap.subj}')">+ Queue</button>
+      `;
+      list.appendChild(row);
+    });
+
+    card.appendChild(head);
+    card.appendChild(list);
+    container.appendChild(card);
+  });
+}
+
+function filterSyllabus(u, val) {
+  renderSyllabus(u, val);
+}
+
+function toggleSubtopic(u, topic) {
+  if (!state[u].completedTopics) state[u].completedTopics = {};
+  state[u].completedTopics[topic] = !state[u].completedTopics[topic];
+  saveLocal();
+  renderAll();
+  renderSyllabus(u);
+  pushUserSlice(u);
+}
+
+function pushToQueue(u, title, subj) {
+  state[u].queue.push({ id: "t" + Date.now(), title, subj, pyqDone: 0, pyqTarget: 30, done: false });
+  saveLocal();
+  renderAll();
+  pushUserSlice(u);
+}
+
+function toggleTask(u, idx) {
+  state[u].queue[idx].done = !state[u].queue[idx].done;
+  saveLocal();
+  renderAll();
+  pushUserSlice(u);
+}
+
+function addPyq(u, idx, count) {
+  state[u].queue[idx].pyqDone += count;
+  saveLocal();
+  renderAll();
+  pushUserSlice(u);
+}
+
+function removeTask(u, idx) {
+  state[u].queue.splice(idx, 1);
+  saveLocal();
+  renderAll();
+  pushUserSlice(u);
+}
+
+function clearDoneTasks(u) {
+  state[u].queue = state[u].queue.filter(t => !t.done);
+  saveLocal();
+  renderAll();
+  pushUserSlice(u);
+}
+
+function addCustomTask(u) {
+  const title = prompt("Enter subtopic or task name:");
+  if (!title) return;
+  const subj = prompt("Subject? Type Physics, Chemistry, or Maths:", "Physics") || "Physics";
+  state[u].queue.push({ id: "c" + Date.now(), title, subj, pyqDone: 0, pyqTarget: 30, done: false });
+  saveLocal();
+  renderAll();
+  pushUserSlice(u);
+}
+
+function logMinutes(u, mins) {
+  if (!mins || mins <= 0) return;
+  ensureDateRollover(u);
+  const today = getTodayStr();
+  if (state[u].lastActiveDate !== today) {
+    state[u].streak = (state[u].streak || 0) + 1;
+    state[u].lastActiveDate = today;
+  }
+  state[u].todayMins += mins;
+  state[u].totalMins += mins;
+  saveLocal();
+  renderAll();
+  pushUserSlice(u);
+}
+
+function logManual(u) {
+  const inp = document.getElementById(`manualMin-${u}`);
+  const val = parseInt(inp.value, 10);
+  if (val > 0) {
+    logMinutes(u, val);
+    inp.value = "";
+  }
+}
+
+// Timer logic
+let timerSeconds = 25 * 60;
+let initialTimerSeconds = 25 * 60;
+let timerInterval = null;
+
+function updateTimerUI() {
+  const m = String(Math.floor(timerSeconds / 60)).padStart(2, "0");
+  const s = String(timerSeconds % 60).padStart(2, "0");
+  document.getElementById("timerDisplay").textContent = `${m}:${s}`;
+}
+
+function setTimerMinutes(m) {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  document.getElementById("startPauseBtn").textContent = "▶ Start";
+  document.getElementById("startPauseBtn").className = "btn btn-start";
+  timerSeconds = m * 60;
+  initialTimerSeconds = m * 60;
+  updateTimerUI();
+}
+
+function applyCustomTimer() {
+  const val = parseInt(document.getElementById("customMinInput").value, 10);
+  if (val > 0) setTimerMinutes(val);
+}
+
+function toggleTimer() {
+  const btn = document.getElementById("startPauseBtn");
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    btn.textContent = "▶ Start";
+    btn.className = "btn btn-start";
+  } else {
+    btn.textContent = "⏸ Pause";
+    btn.className = "btn btn-pause";
+    timerInterval = setInterval(() => {
+      if (timerSeconds > 0) {
+        timerSeconds--;
+        updateTimerUI();
+      } else {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        btn.textContent = "▶ Start";
+        btn.className = "btn btn-start";
+        const logged = Math.round(initialTimerSeconds / 60);
+        logMinutes(config.role, logged);
+        alert(`Session complete! +${logged}m logged for ${config.role.toUpperCase()}.`);
+      }
+    }, 1000);
+  }
+}
+
+// Firebase REST Sync (Per-user slice so Kaushal & Minniiee never overwrite each other)
+function getRoomBaseUrl() {
+  const base = (config.dbUrl || DEFAULT_DB_URL).replace(/\/+$/, "");
+  const room = encodeURIComponent((config.room || DEFAULT_ROOM).trim());
+  return `${base}/rooms/${room}`;
+}
+
+async function pushUserSlice(u) {
+  try {
+    state[u].lastSeen = Date.now();
+    saveLocal();
+    const url = `${getRoomBaseUrl()}/${u}.json`;
+    const res = await fetch(url, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(state[u])
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    document.getElementById("modalDebugMsg").textContent = `Synced ${u} to Firebase at ${new Date().toLocaleTimeString()}`;
+    document.getElementById("modalDebugMsg").style.color = "#34d399";
+  } catch (err) {
+    const btn = document.getElementById("syncStatusBtn");
+    btn.className = "btn btn-sync-warn";
+    btn.textContent = "⚠ Sync Error (Check Internet/Rules)";
+    document.getElementById("modalDebugMsg").textContent = "Error: " + err.message;
+    document.getElementById("modalDebugMsg").style.color = "#fca5a5";
+  }
+}
+
+async function pullRoomFromFirebase() {
+  try {
+    // Heartbeat own presence
+    state[config.role].lastSeen = Date.now();
+    await fetch(`${getRoomBaseUrl()}/${config.role}/lastSeen.json`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(state[config.role].lastSeen)
+    });
+
+    const res = await fetch(`${getRoomBaseUrl()}.json`);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const remote = await res.json();
+    if (remote) {
+      const partner = config.role === "kaushal" ? "minniiee" : "kaushal";
+      if (remote[partner]) {
+        state[partner] = { ...defaultUserState([]), ...remote[partner] };
+      }
+      // If local is fresh (0 mins) and remote has saved progress for self, hydrate it
+      if (remote[config.role] && (state[config.role].totalMins === 0 && remote[config.role].totalMins > 0)) {
+        state[config.role] = { ...defaultUserState([]), ...remote[config.role] };
+      }
+      if (remote.nudge && remote.nudge.ts > lastSeenNudgeTs && remote.nudge.from !== config.role) {
+        lastSeenNudgeTs = remote.nudge.ts;
+        state.nudge = remote.nudge;
+        const banner = document.getElementById("liveBanner");
+        document.getElementById("liveBannerText").textContent = `⚡ ${remote.nudge.text}`;
+        banner.style.display = "flex";
+      }
+      saveLocal();
+      renderAll();
+      renderSyllabus("minniiee");
+      renderSyllabus("kaushal");
+    }
+  } catch (err) {
+    console.warn("Firebase poll issue:", err);
+  }
+}
+
+async function triggerStudyNow() {
+  const who = config.role === "kaushal" ? "Kaushal" : "Minniiee";
+  const tag = document.getElementById("sessionTag").value;
+  const nudge = {
+    from: config.role,
+    text: `${who} is grinding right now (${tag})! Lock in!`,
+    ts: Date.now()
+  };
+  state.nudge = nudge;
+  lastSeenNudgeTs = nudge.ts;
+  saveLocal();
+  await fetch(`${getRoomBaseUrl()}/nudge.json`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(nudge)
+  });
+  alert(`Live nudge sent to partner: "${nudge.text}"`);
+}
+
+async function forceSyncNow() {
+  await pushUserSlice(config.role);
+  await pullRoomFromFirebase();
+}
+
+function switchActiveUser(val) {
+  config.role = val;
+  saveLocal();
+  forceSyncNow();
+  renderAll();
+}
+
+function openDuoModal() { document.getElementById("duoModal").style.display = "flex"; }
+function closeDuoModal() { document.getElementById("duoModal").style.display = "none"; }
+function saveDuoConfig() {
+  config.role = document.getElementById("modalUserRole").value;
+  config.room = document.getElementById("modalRoomCode").value.trim() || DEFAULT_ROOM;
+  config.dbUrl = document.getElementById("modalDbUrl").value.trim() || DEFAULT_DB_URL;
+  saveLocal();
+  forceSyncNow();
+  renderAll();
+  closeDuoModal();
+}
+
+function downloadBackup() {
+  const blob = new Blob([document.documentElement.outerHTML], { type: "text/html" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "index.html";
+  a.click();
+}
+
+// Init
+renderAll();
+renderSyllabus("kaushal");
+renderSyllabus("minniiee");
+forceSyncNow();
+setInterval(pullRoomFromFirebase, 4000);
+</script>
+</body>
+</html>
