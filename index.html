@@ -82,6 +82,7 @@
   .panel-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
   .subtopic-count { text-align: right; font-size: 11px; color: var(--muted); }
   .subtopic-count strong { display: block; font-size: 14px; color: #fff; }
+  .subtopic-count small { font-size: 10px; color: var(--amber); }
 
   .stats-box {
     background: var(--card-inner); border: 1px solid var(--border); border-radius: 10px;
@@ -97,6 +98,13 @@
   .section-box { background: var(--card-inner); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
   .section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
   .section-title { font-size: 12px; font-weight: 800; letter-spacing: 0.4px; }
+  .filter-pills { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
+  .pill-btn {
+    background: var(--card); border: 1px solid var(--border); color: var(--muted);
+    font-size: 11px; padding: 3px 8px; border-radius: 6px; cursor: pointer; font-weight: 600;
+  }
+  .pill-btn.active { border-color: var(--accent); color: #fff; background: #132542; }
+
   .task-item {
     display: flex; justify-content: space-between; align-items: center; gap: 8px;
     background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; margin-bottom: 7px;
@@ -110,11 +118,14 @@
   .subj-chem { color: #34d399; font-weight: 700; }
   .subj-math { color: #c084fc; font-weight: 700; }
 
+  .syllabus-scroll { max-height: 440px; overflow-y: auto; padding-right: 4px; }
   .chapter-card { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; background: var(--card); overflow: hidden; }
-  .chapter-head { padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 12px; font-weight: 700; }
+  .chapter-head { padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 12px; font-weight: 700; gap: 8px; }
   .chapter-head:hover { background: #162238; }
+  .tag-bankai { color: #38bdf8; font-weight: 800; }
+  .tag-flash { color: #f59e0b; font-weight: 800; }
   .subtopic-list { display: none; padding: 8px 10px; border-top: 1px solid var(--border); background: #0c1322; }
-  .subtopic-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 12px; border-bottom: 1px solid #162033; }
+  .subtopic-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 12px; border-bottom: 1px solid #162033; gap: 6px; }
   .subtopic-row:last-child { border-bottom: none; }
 
   .modal-backdrop {
@@ -139,7 +150,7 @@
         <h1>PROJECT 99 | 55-DAY DUO</h1>
         <span class="pill-days" id="daysLeftBadge">55 Days Left</span>
       </div>
-      <div class="subtitle">Target: 220–240 Marks (55–60 Net Qs) • Non-Calc Maths + High-ROI Core</div>
+      <div class="subtitle">Target: 220–240 Marks • 237 BANKAI + 29 FLASH STEP (No Calculus / Sets-Functions)</div>
     </div>
   </div>
   <div class="split-bar">
@@ -170,6 +181,7 @@
       <option>Physics Speed Drill</option>
       <option>Chemistry Core / Organic</option>
       <option>Non-Calc Maths Grind</option>
+      <option>Flash Step Booster</option>
       <option>Mock Analysis</option>
     </select>
     <span class="timer-display" id="timerDisplay">25:00</span>
@@ -193,10 +205,10 @@
   <div class="panel" id="panel-kaushal">
     <div class="panel-header">
       <div>
-        <div class="user-name"><span class="dot" id="dot-kaushal"></span> KAUSHAL <span class="tag-roi">80%+ HIGH-ROI CORE</span></div>
-        <div class="panel-sub">Maths: Non-Calc (14–15 Qs) • Phy & Chem: Speed + Heavy PYQs • Scratch Organic</div>
+        <div class="user-name"><span class="dot" id="dot-kaushal"></span> KAUSHAL <span class="tag-roi">BANKAI 237 + FLASH 29</span></div>
+        <div class="panel-sub">Maths: Non-Calc • Phy & Chem: Speed + Heavy PYQs • Scratch Organic (1–8)</div>
       </div>
-      <div class="subtopic-count">80%+ SUBTOPICS<strong id="subCount-kaushal">0/0 (0%)</strong></div>
+      <div class="subtopic-count">TOTAL MASTERED<strong id="subCount-kaushal">0/266 (0%)</strong><small id="subBreakdown-kaushal">B: 0/237 • FS: 0/29</small></div>
     </div>
 
     <div class="stats-box">
@@ -227,10 +239,17 @@
 
     <div class="section-box">
       <div class="section-head">
-        <span class="section-title">📚 MASTER SYLLABUS POOL (80%+ SUBTOPICS)</span>
-        <input type="text" placeholder="Search chapter or subtopic..." oninput="filterSyllabus('kaushal', this.value)" />
+        <span class="section-title">📚 BANKAI (237) + FLASH STEP (29) POOL</span>
+        <input type="text" id="search-kaushal" placeholder="Search chapter or subtopic..." oninput="renderSyllabus('kaushal')" />
       </div>
-      <div id="syllabus-kaushal"></div>
+      <div class="filter-pills" id="pills-kaushal">
+        <button class="pill-btn active" onclick="setSubjFilter('kaushal', 'ALL', this)">All (266)</button>
+        <button class="pill-btn" onclick="setSubjFilter('kaushal', 'Physics', this)">Physics (124)</button>
+        <button class="pill-btn" onclick="setSubjFilter('kaushal', 'Chemistry', this)">Chemistry (89)</button>
+        <button class="pill-btn" onclick="setSubjFilter('kaushal', 'Maths', this)">Maths (53)</button>
+        <button class="pill-btn" onclick="setSubjFilter('kaushal', 'FLASH', this)">⚡ Flash Step (29)</button>
+      </div>
+      <div class="syllabus-scroll" id="syllabus-kaushal"></div>
     </div>
   </div>
 
@@ -238,10 +257,10 @@
   <div class="panel" id="panel-minniiee">
     <div class="panel-header">
       <div>
-        <div class="user-name"><span class="dot" id="dot-minniiee"></span> MINNIIEE <span class="tag-roi">80%+ HIGH-ROI CORE</span></div>
+        <div class="user-name"><span class="dot" id="dot-minniiee"></span> MINNIIEE <span class="tag-roi">BANKAI 237 + FLASH 29</span></div>
         <div class="panel-sub">11th Phy + Phys/Inorg: Speed • Non-Calc Maths: Heavy PYQs • 12th Phy + Org: Scratch</div>
       </div>
-      <div class="subtopic-count">80%+ SUBTOPICS<strong id="subCount-minniiee">0/0 (0%)</strong></div>
+      <div class="subtopic-count">TOTAL MASTERED<strong id="subCount-minniiee">0/266 (0%)</strong><small id="subBreakdown-minniiee">B: 0/237 • FS: 0/29</small></div>
     </div>
 
     <div class="stats-box">
@@ -272,10 +291,17 @@
 
     <div class="section-box">
       <div class="section-head">
-        <span class="section-title">📚 MASTER SYLLABUS POOL (80%+ SUBTOPICS)</span>
-        <input type="text" placeholder="Search chapter or subtopic..." oninput="filterSyllabus('minniiee', this.value)" />
+        <span class="section-title">📚 BANKAI (237) + FLASH STEP (29) POOL</span>
+        <input type="text" id="search-minniiee" placeholder="Search chapter or subtopic..." oninput="renderSyllabus('minniiee')" />
       </div>
-      <div id="syllabus-minniiee"></div>
+      <div class="filter-pills" id="pills-minniiee">
+        <button class="pill-btn active" onclick="setSubjFilter('minniiee', 'ALL', this)">All (266)</button>
+        <button class="pill-btn" onclick="setSubjFilter('minniiee', 'Physics', this)">Physics (124)</button>
+        <button class="pill-btn" onclick="setSubjFilter('minniiee', 'Chemistry', this)">Chemistry (89)</button>
+        <button class="pill-btn" onclick="setSubjFilter('minniiee', 'Maths', this)">Maths (53)</button>
+        <button class="pill-btn" onclick="setSubjFilter('minniiee', 'FLASH', this)">⚡ Flash Step (29)</button>
+      </div>
+      <div class="syllabus-scroll" id="syllabus-minniiee"></div>
     </div>
   </div>
 </div>
@@ -284,7 +310,7 @@
 <div class="modal-backdrop" id="duoModal">
   <div class="modal">
     <h2>🔥 Firebase Live Duo Sync (Pre-Wired)</h2>
-    <p>Your Firebase Realtime Database and Room <strong>KM143</strong> are already locked in. Just choose who is using <strong>this device</strong>.</p>
+    <p>Your Firebase Realtime Database and Room <strong>KM143</strong> are already locked in. Choose who is using <strong>this device</strong>.</p>
     <div class="field">
       <label>Who is on this phone / laptop?</label>
       <select id="modalUserRole">
@@ -313,21 +339,504 @@ const DEFAULT_DB_URL = "https://km143-12163-default-rtdb.asia-southeast1.firebas
 const DEFAULT_ROOM = "KM143";
 
 const SYLLABUS_DATA = [
-  { chapter: "Electrostatics (Physics)", subj: "Physics", topics: ["Electric Charge & Coulomb's Law", "Electric Field & Field Lines", "Electric Flux & Gauss's Law", "Electric Potential & Potential Energy", "Conductors & Electrostatic Shielding"] },
-  { chapter: "Current Electricity (Physics)", subj: "Physics", topics: ["Drift Velocity & Ohm's Law", "Combination of Resistors & Symmetry", "Kirchhoff's Laws & Cells", "Electrical Instruments (Meter Bridge, Potentiometer, Galvanometer)", "Heating Effect & Power"] },
-  { chapter: "Ray Optics (Physics)", subj: "Physics", topics: ["Reflection & Mirror Formula", "Refraction at Plane Surface & Apparent Depth", "Critical Angle & Total Internal Reflection (TIR)", "Refraction at Curved Surface & Lens Formula", "Prism (Deviation & Dispersion)", "Optical Instruments (Microscope & Telescope)"] },
-  { chapter: "Modern Physics & Semiconductors (Physics)", subj: "Physics", topics: ["Photoelectric Effect", "Bohr's Atomic Model & Spectra", "De Broglie Wavelength & X-Rays", "Radioactivity & Nuclear Binding Energy", "Semiconductors, Diodes & Logic Gates"] },
-  { chapter: "Gravitation & SHM (Physics)", subj: "Physics", topics: ["Newton's Law & Acceleration due to Gravity", "Gravitational Potential & Escape Velocity", "Kepler's Laws & Satellites", "SHM Equations, Energy & Spring-Block Systems"] },
-  { chapter: "Chemical Kinetics (Chemistry)", subj: "Chemistry", topics: ["Rate of Reaction & Rate Law", "Zero & First Order Integrated Equations", "Half-Life & Parallel/Sequential Basics", "Arrhenius Equation & Activation Energy"] },
-  { chapter: "Coordination Compounds (Chemistry)", subj: "Chemistry", topics: ["Werner's Theory & IUPAC Nomenclature", "Isomerism (Structural & Stereoisomerism)", "Valence Bond Theory (VBT) & Hybridization", "Crystal Field Theory (CFT), Magnetic Moment & Color"] },
-  { chapter: "GOC & Hydrocarbons (Organic Seq 1-3)", subj: "Chemistry", topics: ["1. GOC: Inductive, Resonance, Hyperconjugation & Acid/Base", "2. Isomerism: Structural, Geometrical & Optical (R/S, D/L)", "3. Hydrocarbons: Alkanes, Alkenes (Markovnikov/Anti) & Alkynes"] },
-  { chapter: "Oxygen & Nitrogen Organic (Organic Seq 4-8)", subj: "Chemistry", topics: ["4. Haloalkanes & Haloarenes (SN1, SN2, E1, E2)", "5. Alcohols, Phenols & Ethers", "6. Aldehydes, Ketones & Carboxylic Acids (Aldol, Cannizzaro)", "7. Amines & Diazonium Salts", "8. Biomolecules (Carbohydrates, Amino Acids, Vitamins)"] },
-  { chapter: "Vectors & 3D Geometry (Maths Non-Calc)", subj: "Maths", topics: ["Dot & Cross Product Applications", "Scalar & Vector Triple Product", "Direction Cosines & Equation of Line in 3D", "Shortest Distance Between Skew Lines", "Plane Equations & Line-Plane Intersection"] },
-  { chapter: "Matrices, Determinants & Sequences (Maths Non-Calc)", subj: "Maths", topics: ["Properties of Determinants & System of Linear Equations (Cramer's)", "Adjoint, Inverse & Matrix Polynomials", "AP, GP, HP & Special Series (Sigma)", "Binomial Theorem: General & Middle Term, Remainder Problems"] },
-  { chapter: "Sets, Relations, Coordinate & Stats (Maths Quick Wins)", subj: "Maths", topics: ["Sets & Relations (Equivalence, Reflexive/Symmetric/Transitive)", "Straight Lines & Pair of Lines", "Circles (Tangents, Chords & Family of Circles)", "Statistics (Mean, Variance & Standard Deviation)"] }
+  {
+    "chapter": "[BANKAI] Units, Dimensions & Experimental Physics (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "Dimensional Analysis & Checking Formula Consistency",
+      "Finding Dimensions of Unknown Physical Constants",
+      "Percentage Error Propagation in Formulas",
+      "Vernier Callipers: Least Count & Zero Error",
+      "Screw Gauge: Pitch, Least Count & Zero Error",
+      "Significant Figures & Rounding Off Rules"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Kinematics 1D & 2D (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "Average Speed & Average Velocity Cases",
+      "Equations of Motion under Constant Acceleration",
+      "Motion under Gravity & Free Fall Ratios",
+      "x-t, v-t, a-t Graph Conversions & Area/Slope",
+      "Projectile Motion on Horizontal Plane (Range, Hmax, TOF)",
+      "Equation of Trajectory & Projection from Height",
+      "Relative Velocity in 1D & Rain-Man / River-Boat Problems"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Laws of Motion & Friction (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "FBD, Tension & Pulley-Block Constraint Relations",
+      "Connected Blocks on Smooth & Inclined Planes",
+      "Pseudo Force in Accelerated Frames (Lift & Wedge)",
+      "Static vs Kinetic Friction & Angle of Repose",
+      "Block-on-Block Friction & Minimum Force to Move",
+      "Circular Motion Banking of Roads & Conical Pendulum"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Work, Energy & Power (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "Work Done by Constant & Variable Forces (F-x Graph)",
+      "Work-Energy Theorem Applications",
+      "Conservation of Mechanical Energy & Spring Potential",
+      "Vertical Circular Motion Critical Velocities & Tension",
+      "Power: Instantaneous & Average (Pump/Motor Problems)",
+      "1D Elastic & Inelastic Collisions (Coefficient of Restitution)"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Centre of Mass & Rotational Motion (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "COM of Discrete Particles & Continuous Symmetric Bodies",
+      "Cavity Problems in COM & Shift in COM",
+      "Moment of Inertia of Standard Bodies (Ring, Disc, Rod, Sphere)",
+      "Parallel & Perpendicular Axis Theorems",
+      "Torque & Angular Acceleration (Fixed Axis Rotation)",
+      "Conservation of Angular Momentum (Collision & Variable MOI)",
+      "Rolling Motion Kinetic Energy & Acceleration on Incline"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Gravitation (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "Newton's Law of Gravitation & Superposition",
+      "Variation of g with Altitude, Depth & Rotation",
+      "Gravitational Field & Potential of Shell and Solid Sphere",
+      "Gravitational Potential Energy & Escape Velocity",
+      "Orbital Velocity, Time Period & Energy of Satellites",
+      "Kepler's Second & Third Laws of Planetary Motion"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Mechanical Properties of Solids & Fluids (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "Young's Modulus, Stress-Strain Curve & Elastic Energy",
+      "Hydrostatic Pressure, Pascal's Law & Manometers",
+      "Archimedes Principle, Buoyancy & Floating Equilibrium",
+      "Equation of Continuity & Bernoulli's Theorem Applications",
+      "Torricelli's Theorem & Velocity of Efflux",
+      "Stokes' Law, Terminal Velocity & Poiseuille's Formula",
+      "Surface Tension, Excess Pressure in Drops/Bubbles & Capillarity"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Thermal Physics, KTG & Thermodynamics (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "Thermal Expansion (Linear, Area, Volume) & Bimetallic Strip",
+      "Calorimetry, Specific Heat, Latent Heat & Mixing",
+      "Conduction: Thermal Resistance in Series & Parallel",
+      "Newton's Law of Cooling & Stefan-Boltzmann Radiation Law",
+      "Wien's Displacement Law",
+      "KTG: RMS, Average & Most Probable Speeds",
+      "Degrees of Freedom, Cp, Cv & Adiabatic Exponent (Gamma)",
+      "First Law of Thermodynamics & Work in Processes",
+      "Isothermal, Adiabatic, Isobaric & Isochoric P-V Graphs",
+      "Carnot Engine Efficiency & Refrigerator COP"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Oscillations (SHM) & Waves (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "SHM Displacement, Velocity, Acceleration & Phase",
+      "Kinetic & Potential Energy in SHM",
+      "Spring-Block Systems (Series, Parallel & Cut Springs)",
+      "Simple Pendulum & Effective g in Accelerated Frames",
+      "Speed of Transverse Wave on String & Sound Wave",
+      "Superposition, Interference & Beats Frequency",
+      "Standing Waves on Strings & Organ Pipes (Open/Closed)"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Electrostatics & Capacitors (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "Coulomb's Law, Equilibrium of Charges & Pendulum Charge",
+      "Electric Field of Ring, Rod, Disc & Dipole",
+      "Dipole in Uniform Field (Torque & Potential Energy)",
+      "Electric Flux & Gauss's Law Applications",
+      "Electric Potential & Relation E = -dV/dr",
+      "Conductors, Cavity Charge & Electrostatic Shielding",
+      "Parallel Plate Capacitor & Series/Parallel Combinations",
+      "Dielectric Insertion (Battery Connected vs Disconnected)",
+      "Energy Stored in Capacitor & Common Potential Sharing"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Current Electricity (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "Drift Velocity, Mobility & Temperature Dependence of Resistivity",
+      "Equivalent Resistance (Symmetry, Folding & Infinite Ladder)",
+      "Kirchhoff's Laws (KCL/KVL) & Nodal Analysis",
+      "Combination of Cells (Series, Parallel & Mixed Grouping)",
+      "Electrical Power, Bulb Brightness & Maximum Power Theorem",
+      "Wheatstone Bridge & Meter Bridge",
+      "Conversion of Galvanometer into Ammeter & Voltmeter",
+      "RC Circuit Charging & Discharging Steady State"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Magnetic Effects & Magnetism (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "Biot-Savart Law: Straight Wire, Circular Arc & Coil Axis",
+      "Ampere's Circuital Law: Solenoid, Toroid & Thick Wire",
+      "Force on Moving Charge in Uniform B & E+B (Cyclotron)",
+      "Force Between Parallel Current-Carrying Wires",
+      "Torque on Current Loop & Magnetic Dipole Moment",
+      "Moving Coil Galvanometer Current & Voltage Sensitivity",
+      "Dia-, Para- & Ferromagnetic Materials & Curie's Law"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] EMI, AC & EM Waves (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "Magnetic Flux & Faraday's/Lenz's Laws of Induction",
+      "Motional EMF in Translating & Rotating Rods",
+      "Self Inductance, Mutual Inductance & Solenoid Energy",
+      "LR Circuit Growth & Decay of Current",
+      "AC RMS/Average Values, Reactance & Impedance",
+      "Series LCR Circuit, Phasors & Resonance Frequency",
+      "Power Factor, Wattless Current & Transformers",
+      "EM Waves: E/B Ratio, Poynting Vector & Spectrum Order"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Ray Optics & Wave Optics (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "Plane Mirror Rotation, Number of Images & Velocity",
+      "Spherical Mirror Formula & Transverse Magnification",
+      "Refraction at Plane Surface, Apparent Depth & Lateral Shift",
+      "Critical Angle & Total Internal Reflection (TIR)",
+      "Prism: Angle of Deviation, Minimum Deviation & Dispersion",
+      "Lens Maker's Formula, Thin Lens & Combination of Lenses",
+      "Silvered Lens & Power of Lens",
+      "Compound Microscope & Astronomical Telescope Magnification",
+      "YDSE: Fringe Width, Position of Maxima/Minima & Intensity",
+      "YDSE with Thin Slab Insertion & White Light",
+      "Single Slit Diffraction & Polarisation (Malus & Brewster's Law)"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Modern Physics & Semiconductors (Phy)",
+    "subj": "Physics",
+    "topics": [
+      "Photoelectric Effect: Einstein's Equation, Stopping Potential & Graphs",
+      "De Broglie Wavelength of Particles & Accelerated Electrons",
+      "Bohr's Model: Radius, Velocity, Energy & Hydrogen Spectrum",
+      "X-Rays: Continuous/Characteristic & Moseley's Law",
+      "Nuclear Radius, Density, Mass Defect & Binding Energy Curve",
+      "Radioactivity Law, Half-Life, Mean Life & Alpha/Beta/Gamma Decay",
+      "Intrinsic vs Extrinsic Semiconductors & Energy Bands",
+      "P-N Junction Diode Forward/Reverse Bias & Zener Regulator",
+      "Half-Wave & Full-Wave Rectifiers"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Mole Concept & Redox (Chem)",
+    "subj": "Chemistry",
+    "topics": [
+      "Mole Calculations, Avogadro Number & Empirical Formula",
+      "Limiting Reagent & Percentage Yield",
+      "Concentration Terms (Molarity, Molality, Mole Fraction, Mass %)",
+      "Dilution & Mixing of Solutions",
+      "Oxidation Number Rules & Balancing Redox Reactions",
+      "Equivalent Weight & Law of Equivalence in Titrations"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Atomic Structure (Chem)",
+    "subj": "Chemistry",
+    "topics": [
+      "Bohr's Atomic Model Formulas for Hydrogen-like Species",
+      "Hydrogen Spectrum Series & Number of Spectral Lines",
+      "De Broglie Wavelength & Heisenberg Uncertainty Principle",
+      "Quantum Numbers (n, l, m, s) & Orbital Shapes",
+      "Radial & Angular Nodes Calculation",
+      "Aufbau Principle, Hund's Rule & Electronic Configurations"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Chemical Thermodynamics & Equilibrium (Chem)",
+    "subj": "Chemistry",
+    "topics": [
+      "Work, Heat, Internal Energy & Enthalpy (Delta H = Delta U + dnRT)",
+      "Hess's Law, Enthalpy of Formation, Combustion & Bond Enthalpy",
+      "Entropy (Delta S) & Gibbs Free Energy (Delta G) Spontaneity",
+      "Kp vs Kc Relation & Degree of Dissociation (Alpha)",
+      "Le Chatelier's Principle (Pressure, Temp, Volume Effects)",
+      "pH of Strong/Weak Acids & Bases & Polyprotic Acids",
+      "Buffer Solutions (Henderson-Hasselbalch) & Salt Hydrolysis",
+      "Solubility Product (Ksp) & Common Ion Effect"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Solutions & Electrochemistry (Chem)",
+    "subj": "Chemistry",
+    "topics": [
+      "Henry's Law & Raoult's Law (Ideal vs Non-Ideal Solutions)",
+      "Relative Lowering of Vapour Pressure & Elevation in BP",
+      "Depression in Freezing Point & Osmotic Pressure",
+      "Van't Hoff Factor (i) for Association & Dissociation",
+      "Galvanic Cell, Standard Electrode Potential & EMF",
+      "Nernst Equation & Relation Between Ecell, Delta G & Kc",
+      "Conductance, Molar Conductivity & Kohlrausch's Law",
+      "Faraday's Laws of Electrolysis & Product Prediction"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Chemical Kinetics (Chem)",
+    "subj": "Chemistry",
+    "topics": [
+      "Rate of Reaction, Rate Law & Order/Molecularity",
+      "Zero & First Order Integrated Rate Equations & Half-Life",
+      "First Order Gas Phase Pressure & Titration Problems",
+      "Pseudo-First Order Reactions",
+      "Arrhenius Equation, Activation Energy & Catalyst Effect"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Periodic Table & Chemical Bonding (Chem)",
+    "subj": "Chemistry",
+    "topics": [
+      "IUPAC Nomenclature of Elements (Z > 100) & Block Identification",
+      "Periodic Trends: Atomic/Ionic Radii, IE, EA & Electronegativity",
+      "Fajan's Rules & Covalent Character in Ionic Bonds",
+      "VSEPR Theory: Hybridization, Bond Angle & Molecular Geometry",
+      "Dipole Moment (Zero vs Non-Zero Molecules)",
+      "Molecular Orbital Theory (MOT): Bond Order & Paramagnetism",
+      "Hydrogen Bonding (Inter vs Intra) & Boiling Point Anomalies"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Coordination Compounds & d-f Block (Chem)",
+    "subj": "Chemistry",
+    "topics": [
+      "Werner's Theory, Ligands, Denticity & Chelation",
+      "IUPAC Nomenclature of Coordination Complexes",
+      "Structural Isomerism (Ionisation, Hydrate, Linkage, Coordination)",
+      "Geometrical & Optical Isomerism in CN 4 & CN 6",
+      "Valence Bond Theory (VBT): Inner vs Outer Orbital Complexes",
+      "Crystal Field Theory (CFT): Octahedral/Tetrahedral Splitting & CFSE",
+      "Spin-Only Magnetic Moment & Spectrochemical Series",
+      "d-Block: Electronic Configuration, Oxidation States & Catalytic Nature",
+      "KMnO4 & K2Cr2O7 Oxidising Reactions in Acidic/Neutral Medium",
+      "Lanthanoid Contraction & Actinoid Properties"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] p-Block & Practical Salt Analysis (Chem)",
+    "subj": "Chemistry",
+    "topics": [
+      "Group 13 & 14: Inert Pair Effect, Borax, Diborane & Allotropes",
+      "Group 15 & 16: Oxoacids of P & S, Anomalous N & O Behaviour",
+      "Group 17 & 18: Interhalogen Compounds, Oxoacids of Cl & Xenon Fluorides",
+      "Qualitative Analysis: Dry Tests, Flame Test & Borax Bead",
+      "Acid Radicals (Carbonate, Sulphite, Nitrate, Halides) Confirmatory Tests",
+      "Basic Radicals Group 0 to VI Separation & Precipitate Colours"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Organic Seq 1-3: GOC, Isomerism & Hydrocarbons (Chem)",
+    "subj": "Chemistry",
+    "topics": [
+      "1. IUPAC Naming of Polyfunctional & Cyclic Compounds",
+      "1. Inductive, Resonance, Mesomeric & Hyperconjugation Effects",
+      "1. Stability of Carbocations, Carbanions & Free Radicals",
+      "1. Acidic & Basic Strength Comparison (Ortho Effect & SIR)",
+      "1. Aromaticity (Huckel's 4n+2 Rule, Anti- & Non-Aromatic)",
+      "2. Structural Isomerism & Geometrical (Cis/Trans, E/Z) Isomerism",
+      "2. Optical Isomerism: Chiral Centres, R/S, Enantiomers & Meso",
+      "3. Alkanes: Wurtz, Kolbe, Decarboxylation & Free Radical Halogenation",
+      "3. Alkenes: Markovnikov, Anti-Markovnikov, Ozonolysis & Hydroboration",
+      "3. Alkynes: Acidic Hydrogen, Hydration (Kucherov) & Lindlar/Birch Reduction",
+      "3. Benzene: Electrophilic Substitution & Activating/Deactivating Groups"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Organic Seq 4-8: Halo, Oxygen, Nitrogen & Bio (Chem)",
+    "subj": "Chemistry",
+    "topics": [
+      "4. Haloalkanes: SN1 vs SN2 Mechanism, Stereochemistry & Rate",
+      "4. Elimination (E1 vs E2, Saytzeff vs Hofmann) & Haloarenes",
+      "5. Alcohols: Lucas Test, Dehydration, Oxidation & Pinacol",
+      "5. Phenols: Reimer-Tiemann, Kolbe-Schmitt & Bromination",
+      "5. Ethers: Williamson Synthesis & Cleavage with HI",
+      "6. Aldehydes & Ketones: Nucleophilic Addition, Tollens & Fehling Tests",
+      "6. Aldol Condensation, Cannizzaro, Haloform & Clemmensen/Wolff-Kishner",
+      "6. Carboxylic Acids: HVZ Reaction & Acid Derivative Reactivity",
+      "7. Amines: Gabriel Phthalimide, Hofmann Bromamide & Carbylamine Test",
+      "7. Hinsberg Test & Benzene Diazonium Chloride Coupling Reactions",
+      "8. Biomolecules: Glucose Reactions, Sucrose/Maltose/Lactose & Amino Acids",
+      "8. Purification (Chromatography, Distillation) & Lassaigne's Test"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Quadratic Equations & Complex Numbers (Maths)",
+    "subj": "Maths",
+    "topics": [
+      "Nature of Roots, Discriminant & Symmetric Functions of Roots",
+      "Common Roots Condition & Location of Roots on Number Line",
+      "Algebra of Complex Numbers, Modulus & Conjugate Properties",
+      "Argument (Principal Value) & Polar/Euler Form",
+      "Cube Roots of Unity (1, Omega, Omega^2) & Argand Geometry"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Sequences & Series (Maths)",
+    "subj": "Maths",
+    "topics": [
+      "AP nth Term, Sum of n Terms & Common Terms of Two APs",
+      "GP nth Term, Sum to Infinity & Geometric Mean",
+      "AM-GM-HM Inequality for Minimum/Maximum Value",
+      "Arithmetico-Geometric Progression (AGP) Summation",
+      "Method of Differences, Telescoping & Special Series (Sigma)"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Permutations, Combinations & Binomial Theorem (Maths)",
+    "subj": "Maths",
+    "topics": [
+      "Fundamental Counting Principle & Rank of Word in Dictionary",
+      "Permutations with Restrictions (Gap, String & Circular)",
+      "Selections from Identical Objects, Grouping & Beggar's Method",
+      "Binomial General Term (Tr+1), Middle Term & Independent Term",
+      "Remainder Problems & Properties of Binomial Coefficients (nCr)"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Matrices & Determinants (Maths)",
+    "subj": "Maths",
+    "topics": [
+      "Matrix Multiplication, Transpose, Symmetric & Skew-Symmetric",
+      "Cayley-Hamilton Theorem & Matrix Polynomials (A^n)",
+      "Properties of Determinants & Determinant Expansion Tricks",
+      "Adjoint & Inverse of Matrix Properties",
+      "System of Linear Equations: Cramer's Rule (Unique, Infinite, No Solution)"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Coordinate Geometry: Lines, Circles & Conics (Maths)",
+    "subj": "Maths",
+    "topics": [
+      "Distance, Section Formula, Centroid, Incentre & Orthocentre",
+      "Forms of Straight Line, Angle, Foot of Perpendicular & Image",
+      "Family of Lines & Pair of Straight Lines",
+      "Standard & General Equation of Circle, Tangents & Chord of Contact",
+      "Position of Two Circles & Common Tangents",
+      "Parabola: Standard Forms, Focus, Directrix & Focal Chord",
+      "Ellipse & Hyperbola: Eccentricity, Foci, Latus Rectum & Tangents"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Vectors & 3D Geometry (Maths)",
+    "subj": "Maths",
+    "topics": [
+      "Vector Addition, Section Formula & Collinearity/Coplanarity",
+      "Scalar (Dot) Product, Projection & Angle Between Vectors",
+      "Vector (Cross) Product & Area of Triangle/Parallelogram",
+      "Scalar Triple Product (Box Product) & Vector Triple Product",
+      "Direction Cosines (DCs), Direction Ratios (DRs) & Equation of Line in 3D",
+      "Shortest Distance Between Skew Lines & Parallel Lines",
+      "Foot of Perpendicular & Image of Point in a 3D Line",
+      "Equation of Plane, Distance from Point & Line-Plane Intersection"
+    ]
+  },
+  {
+    "chapter": "[BANKAI] Trigonometry, Probability & Statistics (Maths)",
+    "subj": "Maths",
+    "topics": [
+      "Compound, Multiple/Sub-multiple Angles & Trigonometric Equations",
+      "Inverse Trigonometric Functions: Domain, Principal Range & Properties",
+      "Classical Probability, Addition/Multiplication & Conditional Theorems",
+      "Total Probability Theorem & Bayes' Theorem",
+      "Binomial Probability Distribution (Mean = np, Variance = npq)",
+      "Statistics: Mean, Variance, SD & Effect of Change of Origin/Scale",
+      "Heights & Distances / Properties of Triangles Applications",
+      "Trigonometric Ratios & Allied Angles Value Drill",
+      "Trigonometric Ratios & Allied Angles Value Drill"
+    ]
+  },
+  {
+    "chapter": "[FLASH STEP] Physics Rapid Score Boosters (10)",
+    "subj": "Physics",
+    "topics": [
+      "FS-01: Relative Projectile & Minimum Distance Between Two Particles",
+      "FS-02: Rolling with Slipping (Time to Pure Rolling)",
+      "FS-03: Bulk Modulus & Adiabatic Elasticity of Gases",
+      "FS-04: Doppler Effect in Sound (Moving Source & Observer)",
+      "FS-05: RC & LR Transient Time Constant Shortcut",
+      "FS-06: Magnetic Field on Axis of Circular Loop & Helmholtz Coil",
+      "FS-07: Quality Factor (Q-Factor) & Bandwidth in Series LCR",
+      "FS-08: Displacement Method for Focal Length of Convex Lens",
+      "FS-09: Nuclear Fission/Fusion Q-Value & Recoil Kinetic Energy",
+      "FS-10: Logic Gates (AND, OR, NOT, NAND, NOR) & Zener Load Regulation"
+    ]
+  },
+  {
+    "chapter": "[FLASH STEP] Chemistry Rapid Score Boosters (10)",
+    "subj": "Chemistry",
+    "topics": [
+      "FS-11: Eudiometry & Gas Mixture Volume Analysis",
+      "FS-12: Ostwald's Dilution Law & Indicators pH Range",
+      "FS-13: Azeotropes (Minimum vs Maximum Boiling) Examples",
+      "FS-14: Parallel & Sequential First-Order Kinetics Ratios",
+      "FS-15: Banana Bond in Diborane & Silicates Classification",
+      "FS-16: Jahn-Teller Distortion & EAN Rule in Metal Carbonyls",
+      "FS-17: Tautomerism (Keto-Enol Content Order)",
+      "FS-18: Ozonolysis Product Reverse-Engineering Trick",
+      "FS-19: Hoffmann Exhaustive Methylation & Cope Elimination",
+      "FS-20: Zwitterion, Isoelectric Point & Peptide Linkage"
+    ]
+  },
+  {
+    "chapter": "[FLASH STEP] Non-Calc Maths Rapid Score Boosters (9)",
+    "subj": "Maths",
+    "topics": [
+      "FS-21: Rotation of Complex Numbers (Coni's Theorem)",
+      "FS-22: Trigonometric Series Summation (Method of Differences)",
+      "FS-23: Multinomial Theorem Coefficient Finder",
+      "FS-24: Derangements Formula Dn for n = 3, 4, 5",
+      "FS-25: Director Circle & Auxiliary Circle of Conics",
+      "FS-26: Radical Axis & Radical Centre of Three Circles",
+      "FS-27: Coplanarity of Two Lines in 3D Shortcut",
+      "FS-28: Lagrange's Identity |a x b|^2 + (a.b)^2 = |a|^2|b|^2",
+      "FS-29: Combined Mean & Combined Variance of Two Datasets"
+    ]
+  }
 ];
 
-const TOTAL_SUBTOPICS = SYLLABUS_DATA.reduce((acc, c) => acc + c.topics.length, 0);
+const ALL_BANKAI_TOPICS = new Set();
+const ALL_FLASH_TOPICS = new Set();
+SYLLABUS_DATA.forEach(c => {
+  const isFlash = c.chapter.includes("[FLASH STEP]");
+  c.topics.forEach(t => {
+    if (isFlash) ALL_FLASH_TOPICS.add(t);
+    else ALL_BANKAI_TOPICS.add(t);
+  });
+});
+const TOTAL_SUBTOPICS = ALL_BANKAI_TOPICS.size + ALL_FLASH_TOPICS.size;
+
+let subjFilters = { kaushal: "ALL", minniiee: "ALL" };
+
+function setSubjFilter(u, val, btnEl) {
+  subjFilters[u] = val;
+  const wrap = document.getElementById(`pills-${u}`);
+  wrap.querySelectorAll(".pill-btn").forEach(b => b.classList.remove("active"));
+  btnEl.classList.add("active");
+  renderSyllabus(u);
+}
 
 function getTodayStr() {
   return new Date().toISOString().slice(0, 10);
@@ -356,14 +865,14 @@ if (!config.room) config.room = DEFAULT_ROOM;
 
 let state = JSON.parse(localStorage.getItem("p99_duo_state") || "null") || {
   kaushal: defaultUserState([
-    { id: "k1", title: "Electrostatics: Flux & Gauss's Law", subj: "Physics", pyqDone: 0, pyqTarget: 30, done: false },
-    { id: "k2", title: "Chemical Kinetics (Full 80%+ Core)", subj: "Chemistry", pyqDone: 0, pyqTarget: 40, done: false },
-    { id: "k3", title: "Vectors & 3D: Shortest Distance", subj: "Maths", pyqDone: 0, pyqTarget: 35, done: false }
+    { id: "k1", title: "Electric Flux & Gauss's Law Applications", subj: "Physics", pyqDone: 0, pyqTarget: 30, done: false },
+    { id: "k2", title: "Zero & First Order Integrated Rate Equations & Half-Life", subj: "Chemistry", pyqDone: 0, pyqTarget: 40, done: false },
+    { id: "k3", title: "Shortest Distance Between Skew Lines & Parallel Lines", subj: "Maths", pyqDone: 0, pyqTarget: 35, done: false }
   ]),
   minniiee: defaultUserState([
-    { id: "m1", title: "Current Electricity: Resistances & Instruments", subj: "Physics", pyqDone: 0, pyqTarget: 30, done: false },
-    { id: "m2", title: "1. GOC: Electronic Effects & Acid/Base", subj: "Chemistry", pyqDone: 0, pyqTarget: 30, done: false },
-    { id: "m3", title: "Sequences & Series (PYQ Grind)", subj: "Maths", pyqDone: 0, pyqTarget: 40, done: false }
+    { id: "m1", title: "Equivalent Resistance (Symmetry, Folding & Infinite Ladder)", subj: "Physics", pyqDone: 0, pyqTarget: 30, done: false },
+    { id: "m2", title: "1. Inductive, Resonance, Mesomeric & Hyperconjugation Effects", subj: "Chemistry", pyqDone: 0, pyqTarget: 30, done: false },
+    { id: "m3", title: "AP nth Term, Sum of n Terms & Common Terms of Two APs", subj: "Maths", pyqDone: 0, pyqTarget: 40, done: false }
   ]),
   nudge: { from: "", text: "", ts: 0 }
 };
@@ -402,15 +911,19 @@ function renderAll() {
     document.getElementById(`total-${u}`).textContent = formatMins(data.totalMins);
     document.getElementById(`streak-${u}`).textContent = `${data.streak || 0}d`;
 
-    const doneTopicsCount = Object.keys(data.completedTopics || {}).filter(k => data.completedTopics[k]).length;
+    const comp = data.completedTopics || {};
+    let bDone = 0, fDone = 0;
+    ALL_BANKAI_TOPICS.forEach(t => { if (comp[t]) bDone++; });
+    ALL_FLASH_TOPICS.forEach(t => { if (comp[t]) fDone++; });
+    const doneTopicsCount = bDone + fDone;
     const pct = Math.round((doneTopicsCount / TOTAL_SUBTOPICS) * 100);
     document.getElementById(`subCount-${u}`).textContent = `${doneTopicsCount}/${TOTAL_SUBTOPICS} (${pct}%)`;
+    document.getElementById(`subBreakdown-${u}`).textContent = `B: ${bDone}/237 • FS: ${fDone}/29`;
 
     const isOnline = (u === config.role) || (Date.now() - (data.lastSeen || 0) < 25000);
     const dotEl = document.getElementById(`dot-${u}`);
     dotEl.className = isOnline ? "dot online" : "dot";
 
-    // Render queue
     const qEl = document.getElementById(`queue-${u}`);
     qEl.innerHTML = "";
     (data.queue || []).forEach((item, idx) => {
@@ -458,11 +971,18 @@ function renderAll() {
   }
 }
 
-function renderSyllabus(u, filterText = "") {
+function renderSyllabus(u) {
   const container = document.getElementById(`syllabus-${u}`);
   container.innerHTML = "";
-  const q = filterText.toLowerCase().trim();
-  SYLLABUS_DATA.forEach((chap, cIdx) => {
+  const searchEl = document.getElementById(`search-${u}`);
+  const q = searchEl ? searchEl.value.toLowerCase().trim() : "";
+  const fSubj = subjFilters[u] || "ALL";
+
+  SYLLABUS_DATA.forEach((chap) => {
+    const isFlash = chap.chapter.includes("[FLASH STEP]");
+    if (fSubj === "FLASH" && !isFlash) return;
+    if (fSubj !== "ALL" && fSubj !== "FLASH" && chap.subj !== fSubj) return;
+
     const matched = chap.topics.filter(t => !q || t.toLowerCase().includes(q) || chap.chapter.toLowerCase().includes(q));
     if (matched.length === 0) return;
 
@@ -471,7 +991,12 @@ function renderSyllabus(u, filterText = "") {
     const head = document.createElement("div");
     head.className = "chapter-head";
     const doneInChap = chap.topics.filter(t => state[u].completedTopics && state[u].completedTopics[t]).length;
-    head.innerHTML = `<span>${chap.chapter}</span><span style="color:var(--muted)">${doneInChap}/${chap.topics.length} ▼</span>`;
+
+    const formattedTitle = chap.chapter
+      .replace("[BANKAI]", '<span class="tag-bankai">[BANKAI]</span>')
+      .replace("[FLASH STEP]", '<span class="tag-flash">[FLASH STEP]</span>');
+
+    head.innerHTML = `<span>${formattedTitle}</span><span style="color:var(--muted); white-space:nowrap;">${doneInChap}/${chap.topics.length} ▼</span>`;
     const list = document.createElement("div");
     list.className = "subtopic-list";
     if (q) list.style.display = "block";
@@ -482,14 +1007,15 @@ function renderSyllabus(u, filterText = "") {
 
     matched.forEach(topic => {
       const isChecked = !!(state[u].completedTopics && state[u].completedTopics[topic]);
+      const safeTopic = topic.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
       const row = document.createElement("div");
       row.className = "subtopic-row";
       row.innerHTML = `
         <label style="display:flex; align-items:center; gap:7px; cursor:pointer;">
-          <input type="checkbox" ${isChecked ? "checked" : ""} onchange="toggleSubtopic('${u}', '${topic.replace(/'/g, "\'")}')" />
+          <input type="checkbox" ${isChecked ? "checked" : ""} onchange="toggleSubtopic('${u}', '${safeTopic}')" />
           <span style="${isChecked ? "text-decoration:line-through; color:var(--muted);" : ""}">${topic}</span>
         </label>
-        <button class="btn" style="padding:2px 7px; font-size:11px;" onclick="pushToQueue('${u}', '${topic.replace(/'/g, "\'")}', '${chap.subj}')">+ Queue</button>
+        <button class="btn" style="padding:2px 7px; font-size:11px; white-space:nowrap;" onclick="pushToQueue('${u}', '${safeTopic}', '${chap.subj}')">+ Queue</button>
       `;
       list.appendChild(row);
     });
@@ -498,10 +1024,6 @@ function renderSyllabus(u, filterText = "") {
     card.appendChild(list);
     container.appendChild(card);
   });
-}
-
-function filterSyllabus(u, val) {
-  renderSyllabus(u, val);
 }
 
 function toggleSubtopic(u, topic) {
@@ -582,7 +1104,6 @@ function logManual(u) {
   }
 }
 
-// Timer logic
 let timerSeconds = 25 * 60;
 let initialTimerSeconds = 25 * 60;
 let timerInterval = null;
@@ -635,7 +1156,6 @@ function toggleTimer() {
   }
 }
 
-// Firebase REST Sync (Per-user slice so Kaushal & Minniiee never overwrite each other)
 function getRoomBaseUrl() {
   const base = (config.dbUrl || DEFAULT_DB_URL).replace(/\/+$/, "");
   const room = encodeURIComponent((config.room || DEFAULT_ROOM).trim());
@@ -666,7 +1186,6 @@ async function pushUserSlice(u) {
 
 async function pullRoomFromFirebase() {
   try {
-    // Heartbeat own presence
     state[config.role].lastSeen = Date.now();
     await fetch(`${getRoomBaseUrl()}/${config.role}/lastSeen.json`, {
       method: "PUT",
@@ -682,7 +1201,6 @@ async function pullRoomFromFirebase() {
       if (remote[partner]) {
         state[partner] = { ...defaultUserState([]), ...remote[partner] };
       }
-      // If local is fresh (0 mins) and remote has saved progress for self, hydrate it
       if (remote[config.role] && (state[config.role].totalMins === 0 && remote[config.role].totalMins > 0)) {
         state[config.role] = { ...defaultUserState([]), ...remote[config.role] };
       }
@@ -754,7 +1272,6 @@ function downloadBackup() {
   a.click();
 }
 
-// Init
 renderAll();
 renderSyllabus("kaushal");
 renderSyllabus("minniiee");
